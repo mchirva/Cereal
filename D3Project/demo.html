@@ -2,11 +2,12 @@
 	<head>
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/white.css">
-		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 		<style>
             body {
                 font: 15px;
             }
+            .axis pathTwo,
             .axis path,
             .axis line {
                 fill: none;
@@ -24,6 +25,30 @@
                 pointer-events: none;
                 background-color: white;
             }
+            .lineOneTooltip {
+                position: absolute;
+                font-size: 12px;
+                width:  auto;
+                height: auto;
+                pointer-events: all;
+                background-color: white;
+            }
+            .lineTwoTooltip {
+                position: absolute;
+                font-size: 12px;
+                width:  auto;
+                height: auto;
+                pointer-events: none;
+                background-color: white;
+            }
+            .legend {
+                position: absolute;
+                font-size: 12px;
+                width:  auto;
+                height: auto;
+                pointer-events: none;
+                background-color: white;
+            }
             div.round {
                 border: 1px solid black;
                 border-radius: 5px;
@@ -31,19 +56,95 @@
             .axis { 
                 font: 14px sans-serif; 
             }
+            .font-12 {
+                font-size: 12px;
+            }
+            .home-link {
+                float: left;
+                font-size: 15px !important;
+            }
+            .static-text {
+                border: 1px solid black !important;
+                font-size: 15px !important;
+                margin-left: 100px !important;
+            }
         </style>
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section><div id="vis-container"></div></section>
-				<section>Slide 3</section>
+				<section id="home" data-state="stats">
+                    <section class="font-12">
+                        What is the question the dashboard is trying to answer?
+                        The dashboard is trying to enable the viewer to understand information about Life Expectancy (in 2012) around the various regions 
+                        of the world, and in specific answer questions about potential correlation between Per Capita Healthcare Expenditure and Life Expectancy. 
+                        The dashboard is also trying to provide a view into Life expectancy and Per Capita Healthcare Exp trend lines for the various regions 
+                        since 2000 until 2012 through the other components included in the dashboard. We use the entire dataset to populate the dashboard.
+                    </section>
+                    <section class="font-12">
+                        What is the question the dashboard is trying to answer?
+                        The dashboard is trying to enable the viewer to understand information about Life Expectancy (in 2012) around the various regions 
+                        of the world, and in specific answer questions about potential correlation between Per Capita Healthcare Expenditure and Life Expectancy. 
+                        The dashboard is also trying to provide a view into Life expectancy and Per Capita Healthcare Exp trend lines for the various regions 
+                        since 2000 until 2012 through the other components included in the dashboard. We use the entire dataset to populate the dashboard.
+                    </section>
+                </section>
+				<section id="scatterplot">
+                    <div class="static-text">
+                        Static text Line 1 <br>
+                        Static text line 2
+                    </div>
+                    <a class="home-link" href="#/home">Home</a>
+                    <div id="vis-container"></div>
+                </section>
+				<section id="line-chart-1">
+                    <div class="static-text">
+                        Static text Line 1 <br>
+                        Static text line 2
+                    </div>
+                    <a class="home-link" href="#/home">Home</a>
+                    <div id="line-container"></div>
+                </section>
+                <section id="line-chart-2">
+                    <div class="static-text">
+                        Static text Line 1 <br>
+                        Static text line 2
+                    </div>
+                    <a class="home-link" href="#/home">Home</a>
+                    <div id="line-two-container"></div>
+                </section>
+                <section>
+                    <section class="font-12">
+                        <a class="home-link" href="#/home"> Home</a>
+                        What is the question the dashboard is trying to answer?
+                        The dashboard is trying to enable the viewer to understand information about Life Expectancy (in 2012) around the various regions 
+                        of the world, and in specific answer questions about potential correlation between Per Capita Healthcare Expenditure and Life Expectancy. 
+                        The dashboard is also trying to provide a view into Life expectancy and Per Capita Healthcare Exp trend lines for the various regions 
+                        since 2000 until 2012 through the other components included in the dashboard. We use the entire dataset to populate the dashboard.
+                    </section>
+                    <section class="font-12">
+                        <a class="home-link" href="#/home"> Home</a>
+                        What is the question the dashboard is trying to answer?
+                        The dashboard is trying to enable the viewer to understand information about Life Expectancy (in 2012) around the various regions 
+                        of the world, and in specific answer questions about potential correlation between Per Capita Healthcare Expenditure and Life Expectancy. 
+                        The dashboard is also trying to provide a view into Life expectancy and Per Capita Healthcare Exp trend lines for the various regions 
+                        since 2000 until 2012 through the other components included in the dashboard. We use the entire dataset to populate the dashboard.
+                    </section>
+                </section>
 			</div>
 		</div>
 		<script src="js/reveal.js"></script>
 		<script>
 			Reveal.initialize();
+
+            Reveal.addEventListener( 'stats', function() {
+                var hash = location.hash.replace('#','');
+
+                if(hash != ''){
+                    // Clear the hash in the URL
+                    location.hash = '';
+                }
+            } );
             
             //Scatterplot
             d3.csv('scatterplot.csv', function (data) {
@@ -56,7 +157,7 @@
 
             var makeVis = function(data) {
                 // Common pattern for defining vis size and margins
-                var margin = { top: 20, right: 20, bottom: 30, left: 40 },
+                var margin = { top: 20, right: 20, bottom: 50, left: 45 },
                     width  = 1024 - margin.left - margin.right,
                     height = 600 - margin.top - margin.bottom;
 
@@ -64,60 +165,59 @@
                 var canvas = d3.select("#vis-container").append("svg")
                     .attr("width",  width  + margin.left + margin.right)
                     .attr("height", height + margin.top  + margin.bottom)
-                .append("g")
+                    .append("g")
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
                 canvas.append("text")
-                .attr("x", (width / 2))             
-                .attr("y", -5)
-                .attr("text-anchor", "middle")  
-                .style("font-size", "18px")
-                .text("Life Expectancy vs Per Capita Health Expenditure (across the world regions) in 2012");
+                    .attr("x", (width / 2))             
+                    .attr("y", -5)
+                    .attr("text-anchor", "middle")  
+                    .style("font-size", "18px")
+                    .text("Life Expectancy vs Per Capita Health Expenditure (across the world regions) in 2012");
 
                 // Define our scales
-                var colorScale = d3.scale.category10();
+                var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-                var xScale = d3.scale.linear()
+                var xScale = d3.scaleLinear()
                     .domain([10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000])
                     .range([0, 91, 227, 318, 409, 545, 636, 727, 863, 954]);
                     
-                var yScale = d3.scale.linear()
+                var yScale = d3.scaleLinear()
                     .domain([ 40,
                             d3.max(data, function(d) { return d.LifeExpectancy; }) + 1 ])
                     .range([height, 0]); // flip order because y-axis origin is upper LEFT
 
                 // Define our axes
-                var xAxis = d3.svg.axis()
-                    .scale(xScale)
-                    .tickValues([10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000])
-                    .orient('bottom');
+                var xAxis = d3.axisBottom(xScale)
+                    .tickValues([10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000]);
 
-                var yAxis = d3.svg.axis()
-                    .scale(yScale)
-                    .orient('left');
+                var yAxis = d3.axisLeft(yScale);
                     
                 // Add x-axis to the canvas
                 canvas.append("g")
                     .attr("class", "x axis")
                     .attr("transform", "translate(0," + height + ")") // move axis to the bottom of the canvas
                     .call(xAxis)
-                .append("text")
+                    .append("text")
                     .attr("class", "label")
-                    .attr("x", width) // x-offset from the xAxis, move label all the way to the right
-                    .attr("y", -6)    // y-offset from the xAxis, moves text UPWARD!
+                    .attr("x", width/2) // x-offset from the xAxis, move label all the way to the right
+                    .attr("y", 40)    // y-offset from the xAxis, moves text UPWARD!
                     .style("text-anchor", "end") // right-justify text
                     .style("font-size", "15px")
+                    .attr("fill", "black")
                     .text("Avg. Health Exp/Capita (in US $)");
 
                 // Add y-axis to the canvas
                 canvas.append("g")
                     .attr("class", "y axis") // .orient('left') took care of axis positioning for us
                     .call(yAxis)
-                .append("text")
+                    .append("text")
                     .attr("class", "label")
+                    .attr("fill", "black")
                     .attr("transform", "rotate(-90)") // although axis is rotated, text is not
-                    .attr("y", 15) // y-offset from yAxis, moves text to the RIGHT because it's rotated, and positive y is DOWN
-                    .style("text-anchor", "end")
+                    .attr("y", -30) // y-offset from yAxis, moves text to the RIGHT because it's rotated, and positive y is DOWN
+                    .attr("x", 100-height/2)
+                    //.style("text-anchor", "middle")
                     .style("font-size", "15px")
                     .text("Avg. Life Expectancy (Years)");
 
@@ -153,7 +253,7 @@
                 };
 
                 // Add data points!
-                canvas.selectAll(".dot")
+                canvas.selectAll("g")
                 .data(data)
                 .enter().append("circle")
                 .attr("class", "dot")
@@ -164,30 +264,362 @@
                 .style("fill", "white")
                 .on("mouseover", tipMouseover)
                 .on("mouseout", tipMouseout);
-                
-                var legend = canvas.selectAll('.dot')
-                .data(d3.map(data, function(d) {return d.Region}))
-                .enter()
-                .append('g')
-                .attr('class', 'legend');
 
-                legend.append('rect')
-                .attr('x', width - 20)
-                .attr('y', function(d, i) {
-                    return i * 20;
-                })
-                .attr('width', 10)
-                .attr('height', 10)
-                .style('fill', function(d) {
-                    return color(d.Region);
-                });
 
-                legend.append('text')
-                .attr('x', width - 8)
-                .attr('y', function(d, i) {
-                    return (i * 20) + 9;
-                })
+                var keys = ["The Americas", "Oceania", "Africa", "Asia", "Europe", "Middle East"];                                
+                var legend = canvas.append("g")
+                    .attr("class", "legend")
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", 20)
+                    .attr("text-anchor", "start")
+                    .attr("transform", "translate(-40,100)")
+                    .selectAll("g")
+                    .data(keys)
+                    .enter().append("g")
+                    .attr("transform", function(d, i) { return "translate(20," + i * 20 + ")"; });  
+                    
+                legend.append("text")
+                    .attr("x", 825)
+                    .attr("y", 110)
+                    .attr("dy", "0.52em")
+                    .text(function(d) { return d; });
+                    
+                legend.append("rect")
+                    .attr("x", 800)
+                    .attr("y", 100)
+                    .attr("width", 19)
+                    .attr("height", 19)
+                    .attr("fill", function(d) { console.log(d); return colorScale(d);});
+
             };
+
+
+            //Line Chart 1
+            var margin = {top: 30, right: 20, bottom: 50, left: 80},
+            width = 1024 - margin.left - margin.right,
+            height = 600 - margin.top - margin.bottom;
+
+            // Set the ranges
+            var x = d3.scaleLinear().range([0, width]);
+            var y = d3.scaleLinear().range([height, 0]);
+
+            // Define the axes
+            var xAxis = d3.axisBottom(x)
+                .ticks(13);
+
+            var yAxis = d3.axisLeft(y)
+                .ticks(7);
+
+            // Define the line
+            var valueline = d3.line()
+                .x(function(d) { return x(d.Year); })
+                .y(function(d) { return y(d.HealthExpPerCapita); });
+                
+            // Adds the svg canvas
+            var svg = d3.select("#line-container")
+                .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                    .attr("transform", 
+                        "translate(" + margin.left + "," + margin.top + ")");
+
+        
+            svg.append("text")
+                .attr("x", (width / 2))             
+                .attr("y", -5)
+                .attr("text-anchor", "middle")  
+                .style("font-size", "18px")
+                .text("Avg Health Exp/Capita since 2000");
+
+            // Get the data
+            d3.csv("linechart1.csv", function(error, data) {
+            data.forEach(function(d) {
+                d.Year = d.Year;
+                d.HealthExpPerCapita = +d.HealthExpPerCapita;
+            });
+
+            // Scale the range of the data
+            x.domain(d3.extent(data, function(d) { return d.Year; }));
+            y.domain([0, 3000]);
+
+            var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+            var dataNest = d3.nest()
+                .key(function(d) {return d.Region;})
+                .entries(data);
+
+            // Loop through each symbol / key
+            dataNest.forEach(function(d) {
+                svg.append("path")
+                    .attr("class", "line")
+                    .style("fill", "none")
+                    .style("stroke", function() { // Add dynamically
+                        return d.color = color(d.key); })
+                    .attr("d", valueline(d.values));
+
+            });
+
+            // Add the tooltip container to the vis container
+            // it's invisible and its position/contents are defined during mouseover
+            var lineOneTooltip = d3.select("#line-container").append("div")
+                .attr("class", "lineOneTooltip")
+                .style("opacity", 0);
+            
+            // tooltip mouseover event handler
+            var lineOneTipMouseover = function(d) {
+                var lineOneHtml  = "<div class='round'><b>Region:</b> " + d.Region + "<br/>" +
+                            "<b>Year: </b>" + d.Year + "<br/>" +
+                            "<b>Avg. Health Exp/Capita (USD): </b>" + d.HealthExpPerCapita + "<br/>";
+
+                lineOneTooltip.html(lineOneHtml)
+                    .style("left", "800px")
+                    .style("top", "200px")
+                    .style("font-size", "12px")
+                    .style("text-align", "left")
+                    .style("width", "250px")
+                    .transition()
+                    .duration(200) // ms
+                    .style("opacity", .9) // started as 0!
+            };
+            // tooltip mouseout event handler
+            var lineOneTipMouseout = function(d) {
+                lineOneTooltip.transition()
+                    .duration(300) // ms
+                    .style("opacity", 0); // don't care about position!
+            };
+
+            // Add the X Axis
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("x", width/2) // x-offset from the xAxis, move label all the way to the right
+                .attr("y", 40)    // y-offset from the xAxis, moves text UPWARD!
+                .style("text-anchor", "end") // right-justify text
+                .style("font-size", "15px")
+                .attr("fill", "black")
+                .text("Year");
+
+
+            // Add the Y Axis
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("transform", "rotate(-90)") // although axis is rotated, text is not
+                .attr("x", 100-height/2)
+                .attr("y", -55) // y-offset from yAxis, moves text to the RIGHT because it's rotated, and positive y is DOWN
+                .style("text-anchor", "end")
+                .style("font-size", "15px")
+                .attr("fill", "black")
+                .text("Avg. Health Exp/Capita (USD)");
+
+                
+            // Add the scatterplot
+            svg.selectAll("g")
+                .data(data)
+                .enter().append("circle")
+                .attr("class", "dot")
+                .attr("r", 3.5)
+                .attr("cx", function(d) { return x(d.Year); })
+                .attr("cy", function(d) { return y(d.HealthExpPerCapita); })
+                .style("stroke", function(d) { return color(d.Region); })    // set the line colour
+                .style("fill", "white")
+                .on("mouseover", lineOneTipMouseover)
+                .on("mouseout", lineOneTipMouseout);
+
+                var lineOneKeys = ["The Americas", "Oceania", "Africa", "Asia", "Europe", "Middle East"];                                
+                var lineOneLegend = svg.append("g")
+                    .attr("class", "legend")
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", 20)
+                    .attr("text-anchor", "start")
+                    .attr("transform", "translate(-40,100)")
+                    .selectAll("g")
+                    .data(lineOneKeys)
+                    .enter().append("g")
+                    .attr("transform", function(d, i) { return "translate(20," + i * 20 + ")"; });  
+                    
+                lineOneLegend.append("text")
+                    .attr("x", 825)
+                    .attr("y", 90)
+                    .attr("dy", "0.52em")
+                    .text(function(d) { return d; });
+                    
+                lineOneLegend.append("rect")
+                    .attr("x", 800)
+                    .attr("y", 80)
+                    .attr("width", 19)
+                    .attr("height", 19)
+                    .attr("fill", function(d) { console.log(d); return color(d);});
+
+            });
+
+            //Line Chart 2
+            var lineTwoMargin = {top: 30, right: 20, bottom: 30, left: 50},
+            widthTwo = 1024 - lineTwoMargin.left - lineTwoMargin.right,
+            heightTwo = 600 - lineTwoMargin.top - lineTwoMargin.bottom;
+
+            // Set the ranges
+            var lineTwoX = d3.scaleLinear().range([0, widthTwo]);
+            var lineTwoY = d3.scaleLinear().range([heightTwo, 0]);
+
+            // Define the axes
+            var lineTwoXAxis = d3.axisBottom(lineTwoX)
+                .ticks(13);
+
+            var lineTwoYAxis = d3.axisLeft(lineTwoY)
+                .ticks(7);
+
+            // Define the line
+            var valuelineTwo = d3.line()
+                .x(function(d) { return lineTwoX(d.Year); })
+                .y(function(d) { return lineTwoY(d.LifeExpectancy); });
+                
+            // Adds the svg canvas
+            var svgTwo = d3.select("#line-two-container")
+                .append("svg")
+                    .attr("width", widthTwo + lineTwoMargin.left + lineTwoMargin.right)
+                    .attr("height", heightTwo + lineTwoMargin.top + lineTwoMargin.bottom)
+                .append("g")
+                    .attr("transform", 
+                        "translate(" + lineTwoMargin.left + "," + lineTwoMargin.top + ")");
+
+        
+            svgTwo.append("text")
+                .attr("x", (widthTwo / 2))             
+                .attr("y", -5)
+                .attr("text-anchor", "middle")  
+                .style("font-size", "18px")
+                .text("Life Expectancy since 2000");
+
+            // Get the data
+            d3.csv("linechart2.csv", function(error, data) {
+            data.forEach(function(d) {
+                d.Year = d.Year;
+                d.LifeExpectancy = +d.LifeExpectancy;
+            });
+
+            // Scale the range of the data
+            lineTwoX.domain(d3.extent(data, function(d) { return d.Year; }));
+            lineTwoY.domain([50, 80]);
+
+            var colorThree = d3.scaleOrdinal(d3.schemeCategory10);
+
+            var dataNestTwo = d3.nest()
+                .key(function(d) {return d.Region;})
+                .entries(data);
+
+            // Loop through each symbol / key
+            dataNestTwo.forEach(function(d) {
+                svgTwo.append("path")
+                    .attr("class", "line")
+                    .style("fill", "none")
+                    .style("stroke", function() { // Add dynamically
+                        return d.color = colorThree(d.key); })
+                    .attr("d", valuelineTwo(d.values));
+            });
+
+            // Add the tooltip container to the vis container
+            // it's invisible and its position/contents are defined during mouseover
+            var lineTwoTooltip = d3.select("#line-two-container").append("div")
+                .attr("class", "lineTwoTooltip")
+                .style("opacity", 0);
+            
+            // tooltip mouseover event handler
+            var lineTwoTipMouseover = function(d) {
+                var lineTwoHtml  = "<div class='round'><b>Region:</b> " + d.Region + "<br/>" +
+                            "<b>Year: </b>" + d.Year + "<br/>" +
+                            "<b>Avg. Life Expectancy (years): </b>" + d.LifeExpectancy + "<br/>";
+
+                lineTwoTooltip.html(lineTwoHtml)
+                    .style("left", "800px")
+                    .style("top", "550px")
+                    .style("font-size", "12px")
+                    .style("text-align", "left")
+                    .style("width", "250px")
+                    .transition()
+                    .duration(200) // ms
+                    .style("opacity", .9) // started as 0!
+            };
+            // tooltip mouseout event handler
+            var lineTwoTipMouseout = function(d) {
+                lineTwoTooltip.transition()
+                    .duration(300) // ms
+                    .style("opacity", 0); // don't care about position!
+            };
+
+            // Add the X Axis
+            svgTwo.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(lineTwoXAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("x", width/2) // x-offset from the xAxis, move label all the way to the right
+                .attr("y", 35)    // y-offset from the xAxis, moves text UPWARD!
+                .style("text-anchor", "end") // right-justify text
+                .style("font-size", "15px")
+                .text("Year")
+                .attr("fill", "black");
+
+
+            // Add the Y Axis
+            svgTwo.append("g")
+                .attr("class", "y axis")
+                .call(lineTwoYAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("transform", "rotate(-90)") // although axis is rotated, text is not
+                .attr("y", -30) // y-offset from yAxis, moves text to the RIGHT because it's rotated, and positive y is DOWN
+                .attr("x", 100-height/2)
+                .style("text-anchor", "end")
+                .style("font-size", "15px")
+                .attr("fill", "black")
+                .text("Avg. Life Expectancy (Years)");
+            
+            // Add the scatterplot
+            svgTwo.selectAll("g")
+                .data(data)
+                .enter().append("circle")
+                .attr("class", "dot")
+                .attr("r", 3.5)
+                .attr("cx", function(d) { return lineTwoX(d.Year); })
+                .attr("cy", function(d) { return lineTwoY(d.LifeExpectancy); })
+                .style("stroke", function(d) { return colorThree(d.Region); })    // set the line colour
+                .style("fill", "white")
+                .on("mouseover", lineTwoTipMouseover)
+                .on("mouseout", lineTwoTipMouseout);
+
+                var lineTwoKeys = ["The Americas", "Oceania", "Africa", "Asia", "Europe", "Middle East"];                                
+                var lineTwoLegend = svgTwo.append("g")
+                    .attr("class", "legend")
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", 20)
+                    .attr("text-anchor", "start")
+                    .attr("transform", "translate(-40,100)")
+                    .selectAll("g")
+                    .data(lineTwoKeys)
+                    .enter().append("g")
+                    .attr("transform", function(d, i) { return "translate(20," + i * 20 + ")"; });  
+                    
+                lineTwoLegend.append("text")
+                    .attr("x", 825)
+                    .attr("y", 90)
+                    .attr("dy", "0.52em")
+                    .text(function(d) { return d; });
+                    
+                lineTwoLegend.append("rect")
+                    .attr("x", 800)
+                    .attr("y", 80)
+                    .attr("width", 19)
+                    .attr("height", 19)
+                    .attr("fill", function(d) { console.log(d); return colorThree(d);});
+                }); 
 		</script>
 	</body>
 </html>
